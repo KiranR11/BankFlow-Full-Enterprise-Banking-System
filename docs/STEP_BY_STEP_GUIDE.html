@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BankFlow — Step-by-Step Build Guide</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#2563eb;--indigo:#4f46e5;--green:#059669;--amber:#d97706;--red:#dc2626;--dark:#0f172a;--gray1:#111827;--gray2:#374151;--gray3:#6b7280;--gray5:#e5e7eb;--gray6:#f9fafb;--mono:'Courier New',monospace}
+body{font-family:system-ui,-apple-system,sans-serif;color:var(--gray1);background:var(--gray6);line-height:1.7;font-size:15px}
+.print-bar{position:fixed;top:0;left:0;right:0;background:var(--dark);color:white;padding:.5rem 2rem;display:flex;justify-content:space-between;align-items:center;z-index:100}
+.print-btn{background:var(--blue);color:white;border:none;padding:.4rem 1.2rem;border-radius:6px;cursor:pointer;font-weight:600}
+.cover{min-height:100vh;background:linear-gradient(145deg,#0f172a,#1e3a5f,#2563eb);color:white;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:4rem 2rem;margin-top:2.5rem}
+.cover h1{font-size:2.6rem;font-weight:800;line-height:1.2;margin-bottom:1rem}
+.cover h1 span{color:#93c5fd}
+.cover p{font-size:1rem;opacity:.8;max-width:620px;margin-bottom:2rem}
+.tags{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-bottom:1.5rem}
+.tag{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:white;padding:.3rem .9rem;border-radius:20px;font-size:.8rem;font-weight:500}
+.note-box{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:1rem 1.5rem;max-width:600px;font-size:.88rem;opacity:.9}
+.wrapper{max-width:900px;margin:0 auto;padding:2rem}
+.toc{background:white;border-radius:12px;padding:2rem;margin-bottom:2rem;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.toc h2{font-size:1.3rem;margin-bottom:1rem;color:var(--blue)}
+.toc ol{padding-left:1.5rem}
+.toc li{padding:.3rem 0}
+.toc a{color:var(--blue);text-decoration:none;font-weight:500}
+.section{background:white;border-radius:12px;padding:2rem;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.section-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid var(--gray5)}
+.step-num{background:var(--blue);color:white;min-width:2.5rem;height:2.5rem;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0}
+h2{font-size:1.3rem;font-weight:700}
+h3{font-size:1rem;font-weight:700;margin:1.5rem 0 .5rem}
+h4{font-size:.9rem;font-weight:700;margin:1rem 0 .4rem;color:var(--gray2)}
+p{color:var(--gray2);margin-bottom:.8rem}
+ul,ol{padding-left:1.4rem;color:var(--gray2);margin-bottom:.8rem}
+li{margin-bottom:.3rem}
+pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:1.2rem;font-family:var(--mono);font-size:.82rem;line-height:1.9;overflow-x:auto;margin:.8rem 0}
+code{font-family:var(--mono);font-size:.82rem;background:var(--gray5);color:#c026d3;padding:.15rem .4rem;border-radius:4px}
+pre code{background:none;color:inherit;padding:0}
+.cmt{color:#64748b}.kw{color:#93c5fd}.str{color:#86efac}.ann{color:#f9a8d4}.num{color:#fbbf24}
+.callout{border-radius:8px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;align-items:flex-start;font-size:.88rem}
+.callout-icon{font-size:1rem;flex-shrink:0;margin-top:.1rem}
+.tip{background:#fefce8;border-left:4px solid var(--amber)}
+.explain{background:#f0fdf4;border-left:4px solid var(--green)}
+.warn{background:#fef2f2;border-left:4px solid var(--red)}
+.interview{background:#eff6ff;border-left:4px solid var(--blue)}
+.dep-box{background:var(--gray6);border:2px dashed var(--blue);border-radius:12px;padding:1.5rem;margin:1rem 0}
+.dep-row{display:flex;align-items:flex-start;gap:.8rem;padding:.6rem 0;border-bottom:1px solid var(--gray5)}
+.dep-name{font-weight:700;color:var(--blue);min-width:220px;font-size:.85rem}
+.dep-desc{font-size:.85rem;color:var(--gray2)}
+.qa-item{border:1px solid var(--gray5);border-radius:8px;margin:.8rem 0;overflow:hidden}
+.qa-q{background:var(--blue);color:white;padding:.8rem 1rem;font-weight:600;font-size:.88rem}
+.qa-a{padding:.8rem 1rem;font-size:.85rem;color:var(--gray2);background:var(--gray6);line-height:1.7}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.8rem 0}
+th{background:var(--gray1);color:white;padding:.6rem 1rem;text-align:left}
+td{padding:.6rem 1rem;border-bottom:1px solid var(--gray5);color:var(--gray2)}
+tr:hover td{background:var(--gray6)}
+@media print{.print-bar{display:none}.cover{margin-top:0;page-break-after:always}.section{page-break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="print-bar"><span>🏦 BankFlow — Step-by-Step Build Guide</span><button class="print-btn" onclick="window.print()">🖨️ Save as PDF</button></div>
+
+<div class="cover">
+<div class="tags"><span class="tag">Java 17</span><span class="tag">Spring Boot 3.2</span><span class="tag">React 18</span><span class="tag">Apache Kafka</span><span class="tag">Redis</span><span class="tag">PostgreSQL</span><span class="tag">JWT</span><span class="tag">Docker</span></div>
+<h1>BankFlow — <span>Complete Build Guide</span></h1>
+<p>Step-by-step guide to build, understand, and explain every part of this Full Enterprise Banking System in interviews — from zero to production.</p>
+<div class="note-box">📌 This guide explains every file, every annotation, and every design decision. After reading this, you can confidently answer "walk me through your banking project" in any technical interview.</div>
+</div>
+
+<div class="wrapper">
+
+<div class="toc">
+<h2>📋 Table of Contents</h2>
+<ol>
+<li><a href="#s1">What is BankFlow? (Simple Explanation)</a></li>
+<li><a href="#s2">Architecture — How 7 Services Work Together</a></li>
+<li><a href="#s3">Prerequisites</a></li>
+<li><a href="#s4">Step 1: Create Services (Spring Initializr)</a></li>
+<li><a href="#s5">Step 2: User Service — JWT, BCrypt, Spring Security</a></li>
+<li><a href="#s6">Step 3: Account Service — JPA, Balance, Debit/Credit</a></li>
+<li><a href="#s7">Step 4: Transaction Service — Deposit, Withdraw, Transfer</a></li>
+<li><a href="#s8">Step 5: Loan Service — EMI Formula, Approval Workflow</a></li>
+<li><a href="#s9">Step 6: Fraud Detection — Rule-Based Scoring</a></li>
+<li><a href="#s10">Step 7: Notification Service — Kafka Consumer Patterns</a></li>
+<li><a href="#s11">Step 8: API Gateway — Spring Cloud Gateway</a></li>
+<li><a href="#s12">Step 9: Redis — When and Why</a></li>
+<li><a href="#s13">Step 10: React Frontend</a></li>
+<li><a href="#s14">Step 11: Docker Setup</a></li>
+<li><a href="#s15">Step 12: Running the Project</a></li>
+<li><a href="#s16">Step 13: API Testing</a></li>
+<li><a href="#s17">Step 14: Interview Q&A (12 Questions)</a></li>
+</ol>
+</div>
+
+<div class="section" id="s1">
+<div class="section-header"><div class="step-num">📌</div><h2>What is BankFlow? (Simple Explanation)</h2></div>
+<p><strong>Think of BankFlow as a simplified version of HDFC or SBI's digital banking backend.</strong> When a customer opens the app, they can check their balance, transfer money to someone, apply for a loan, and get notified when any transaction happens. All of this is handled by 7 separate backend services that work together.</p>
+<div class="callout explain"><span class="callout-icon">✅</span><div>
+<strong>Why 7 services?</strong> Think of a real bank — there's a separate department for accounts, one for loans, one for fraud, one for customer service. Each team is independent. If the loan department has an issue, the accounts department still works. That's microservices.
+</div></div>
+<table>
+<tr><th>Service</th><th>Bank Analogy</th><th>What It Does</th></tr>
+<tr><td>API Gateway</td><td>Bank's main door</td><td>Routes customers to right department, checks ID (JWT)</td></tr>
+<tr><td>User Service</td><td>Customer Relations</td><td>Register, login, KYC verification</td></tr>
+<tr><td>Account Service</td><td>Accounts Department</td><td>Open accounts, check balance, debit/credit</td></tr>
+<tr><td>Transaction Service</td><td>Cashier / Teller</td><td>Process deposits, withdrawals, transfers</td></tr>
+<tr><td>Loan Service</td><td>Loans Department</td><td>Apply, approve, calculate EMIs</td></tr>
+<tr><td>Notification Service</td><td>SMS/Email team</td><td>Send alerts for every transaction</td></tr>
+<tr><td>Fraud Detection</td><td>Risk Department</td><td>Flag suspicious transactions</td></tr>
+</table>
+</div>
+
+<div class="section" id="s2">
+<div class="section-header"><div class="step-num">🏗️</div><h2>Architecture — How 7 Services Work Together</h2></div>
+<pre>Customer → POST /api/transactions/transfer (via Gateway)
+     │
+     ▼
+Transaction Service (:8083)
+  1. Create Transaction record in transactions_db
+  2. Publish to "transfer.initiated" topic on Kafka
+  3. Publish to "fraud.check.request" topic on Kafka
+     │                              │
+     ▼                              ▼
+Notification Service         Fraud Detection Service
+  Consumes "transfer.initiated"  Consumes "fraud.check.request"
+  Sends SMS/Email alert          Applies 4 risk rules
+  to customer                    If risk >= 30 → creates FraudAlert
+                                 → Publishes "fraud.alert"
+                                       │
+                                       ▼
+                                 Notification Service
+                                 Sends FRAUD ALERT to
+                                 security team + customer</pre>
+<div class="callout tip"><span class="callout-icon">💡</span><div><strong>Key Interview Point:</strong> "Services communicate asynchronously via Kafka. The Transaction Service doesn't wait for fraud check to complete — it publishes the message and returns immediately. This is non-blocking, so the customer gets instant confirmation while fraud checking happens in the background."</div></div>
+</div>
+
+<div class="section" id="s3">
+<div class="section-header"><div class="step-num">⚙️</div><h2>Prerequisites</h2></div>
+<table>
+<tr><th>Tool</th><th>How to Install</th><th>Why</th></tr>
+<tr><td>Java 17</td><td>adoptium.net → Eclipse Temurin 17</td><td>All backend services</td></tr>
+<tr><td>Maven 3.9</td><td>brew install maven (Mac)</td><td>Build tool</td></tr>
+<tr><td>Node.js 20</td><td>nodejs.org LTS</td><td>React frontend</td></tr>
+<tr><td>Docker Desktop</td><td>docker.com</td><td>Kafka, Redis, PostgreSQL</td></tr>
+<tr><td>IntelliJ IDEA</td><td>jetbrains.com (Community=free)</td><td>Java IDE</td></tr>
+<tr><td>Postman</td><td>postman.com</td><td>API testing</td></tr>
+</table>
+</div>
+
+<div class="section" id="s4">
+<div class="section-header"><div class="step-num">01</div><h2>Step 1: Create Services (Spring Initializr)</h2></div>
+<p>Go to <strong>https://start.spring.io</strong> and create each service. Here are the exact settings:</p>
+<div class="dep-box">
+<h4>⚙️ User Service (do this for each — change Artifact only)</h4>
+<table><tr><th>Field</th><th>Value</th></tr>
+<tr><td>Group</td><td>com.bankflow</td></tr>
+<tr><td>Artifact</td><td>user-service (then repeat for account-service, transaction-service, etc.)</td></tr>
+<tr><td>Java</td><td>17</td></tr>
+<tr><td>Spring Boot</td><td>3.2.0</td></tr>
+</table>
+<h4>✅ Dependencies (click ADD DEPENDENCIES and search)</h4>
+<div class="dep-row"><span class="dep-name">Spring Web</span><span class="dep-desc">Build REST APIs — includes embedded Tomcat</span></div>
+<div class="dep-row"><span class="dep-name">Spring Security</span><span class="dep-desc">JWT auth + @PreAuthorize (User Service only)</span></div>
+<div class="dep-row"><span class="dep-name">Spring Data JPA</span><span class="dep-desc">ORM — no SQL needed, uses Hibernate</span></div>
+<div class="dep-row"><span class="dep-name">Spring Data Redis</span><span class="dep-desc">Redis cache operations (User, Account, Fraud services)</span></div>
+<div class="dep-row"><span class="dep-name">Spring Validation</span><span class="dep-desc">@NotBlank, @Email, @Min annotations</span></div>
+<div class="dep-row"><span class="dep-name">Spring Boot Actuator</span><span class="dep-desc">Health check /actuator/health for Docker</span></div>
+<div class="dep-row"><span class="dep-name">Spring for Apache Kafka</span><span class="dep-desc">Kafka producer and consumer integration</span></div>
+<div class="dep-row"><span class="dep-name">PostgreSQL Driver</span><span class="dep-desc">JDBC driver for PostgreSQL</span></div>
+<div class="dep-row"><span class="dep-name">Lombok</span><span class="dep-desc">Auto-generates getters, setters, @Builder, @Slf4j</span></div>
+</div>
+<p>Manually add JJWT to pom.xml (User Service + all services that validate JWT):</p>
+<pre><span class="cmt">&lt;!-- JWT API --&gt;</span>
+<span class="kw">&lt;dependency&gt;&lt;groupId&gt;</span>io.jsonwebtoken<span class="kw">&lt;/groupId&gt;</span>
+  <span class="kw">&lt;artifactId&gt;</span>jjwt-api<span class="kw">&lt;/artifactId&gt;&lt;version&gt;</span>0.12.3<span class="kw">&lt;/version&gt;&lt;/dependency&gt;</span>
+<span class="kw">&lt;dependency&gt;&lt;groupId&gt;</span>io.jsonwebtoken<span class="kw">&lt;/groupId&gt;</span>
+  <span class="kw">&lt;artifactId&gt;</span>jjwt-impl<span class="kw">&lt;/artifactId&gt;&lt;version&gt;</span>0.12.3<span class="kw">&lt;/version&gt;&lt;scope&gt;</span>runtime<span class="kw">&lt;/scope&gt;&lt;/dependency&gt;</span>
+<span class="kw">&lt;dependency&gt;&lt;groupId&gt;</span>io.jsonwebtoken<span class="kw">&lt;/groupId&gt;</span>
+  <span class="kw">&lt;artifactId&gt;</span>jjwt-jackson<span class="kw">&lt;/artifactId&gt;&lt;version&gt;</span>0.12.3<span class="kw">&lt;/version&gt;&lt;scope&gt;</span>runtime<span class="kw">&lt;/scope&gt;&lt;/dependency&gt;</span></pre>
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>Use JJWT 0.12.3 specifically — older versions use <code>Jwts.parser().setSigningKey()</code> (deprecated). Version 0.12.x uses <code>Jwts.parser().verifyWith(key).build()</code>.</div></div>
+</div>
+
+<div class="section" id="s5">
+<div class="section-header"><div class="step-num">02</div><h2>Step 2: User Service — JWT, BCrypt, Spring Security</h2></div>
+<div class="callout interview"><span class="callout-icon">🎯</span><div><strong>This is the most important section.</strong> 70% of interview questions will be about JWT and Spring Security.</div></div>
+<h3>User.java — implements UserDetails</h3>
+<pre><span class="ann">@Entity</span>
+<span class="ann">@Table</span>(name = <span class="str">"users"</span>)
+<span class="kw">public class</span> User <span class="kw">implements</span> UserDetails {
+    <span class="cmt">// @Id, @Column fields...</span>
+
+    <span class="ann">@Enumerated</span>(EnumType.STRING)
+    <span class="kw">private</span> Role role;  <span class="cmt">// CUSTOMER or ADMIN</span>
+
+    <span class="cmt">// Spring Security requires these methods:</span>
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> Collection&lt;?&gt; getAuthorities() {
+        <span class="kw">return</span> List.of(<span class="kw">new</span> SimpleGrantedAuthority(<span class="str">"ROLE_"</span> + role.name()));
+        <span class="cmt">// ROLE_CUSTOMER or ROLE_ADMIN</span>
+    }
+
+    <span class="ann">@Override</span> <span class="kw">public boolean</span> isEnabled() { <span class="kw">return</span> status == UserStatus.ACTIVE; }
+    <span class="cmt">// If status is SUSPENDED → isAccountNonLocked() returns false → login blocked</span>
+}</pre>
+<div class="callout explain"><span class="callout-icon">✅</span><div><strong>Why implements UserDetails?</strong> Spring Security needs to understand your User class. By implementing UserDetails, you're telling Spring: "Here's how to check if this user is enabled, what their authorities are, what their password is." Spring Security then uses this for authentication automatically.</div></div>
+<h3>JWT Flow</h3>
+<pre><span class="cmt">// 1. Login request arrives</span>
+<span class="cmt">// 2. AuthenticationManager validates: BCrypt.check(inputPassword, storedHash)</span>
+<span class="cmt">// 3. If valid, JwtService creates token:</span>
+Jwts.builder()
+    .subject(user.getEmail())          <span class="cmt">// who is this for?</span>
+    .claim(<span class="str">"role"</span>, user.getRole())     <span class="cmt">// embed role in token</span>
+    .issuedAt(<span class="kw">new</span> Date())              <span class="cmt">// when created?</span>
+    .expiration(after24hours)           <span class="cmt">// when it expires?</span>
+    .signWith(secretKey)                <span class="cmt">// sign with HMAC-SHA256</span>
+    .compact();                         <span class="cmt">// build to "header.payload.signature"</span>
+
+<span class="cmt">// 4. Client stores token in localStorage</span>
+<span class="cmt">// 5. Every request: Authorization: Bearer eyJhbGc...</span>
+<span class="cmt">// 6. JwtAuthenticationFilter (OncePerRequestFilter) validates on every call</span></pre>
+<div class="callout tip"><span class="callout-icon">💡</span><div><strong>BCrypt explained:</strong> BCrypt is a one-way hash. "password123" → "$2a$10$Xa3bcd...". It's one-way — you can NEVER reverse it. Each hash has a unique "salt" built in. When logging in, BCrypt hashes the input and compares. This prevents rainbow table attacks.</div></div>
+<h3>SecurityConfig — The Rules</h3>
+<pre><span class="cmt">// Spring Security 6 — Functional DSL (no WebSecurityConfigurerAdapter)</span>
+http
+    .csrf(disable)               <span class="cmt">// REST APIs don't need CSRF</span>
+    .cors(configure)             <span class="cmt">// Allow React (localhost:3000)</span>
+    .authorizeRequests()
+        .requestMatchers(<span class="str">"/api/auth/**"</span>).permitAll()     <span class="cmt">// no token for login/register</span>
+        .requestMatchers(<span class="str">"/api/users/**"</span>).hasRole(<span class="str">"ADMIN"</span>) <span class="cmt">// only ADMIN</span>
+        .anyRequest().authenticated()                   <span class="cmt">// everything else needs JWT</span>
+    .sessionManagement(STATELESS)   <span class="cmt">// no sessions — JWT handles state</span>
+    .addFilterBefore(jwtFilter, ...);  <span class="cmt">// our filter runs first</span></pre>
+</div>
+
+<div class="section" id="s6">
+<div class="section-header"><div class="step-num">03</div><h2>Step 3: Account Service — JPA, Balance, Debit/Credit</h2></div>
+<h3>Account Types</h3>
+<ul>
+<li><strong>SAVINGS</strong> — Standard savings account with interest</li>
+<li><strong>CURRENT</strong> — Business account, no interest but higher transaction limits</li>
+<li><strong>FIXED_DEPOSIT</strong> — Fixed term, higher interest rate</li>
+<li><strong>RECURRING_DEPOSIT</strong> — Monthly deposits for a fixed period</li>
+</ul>
+<h3>debit() and credit() with @Transactional</h3>
+<pre><span class="ann">@Transactional</span>  <span class="cmt">// If anything throws → database change is ROLLED BACK</span>
+<span class="kw">public void</span> debit(String accountNumber, BigDecimal amount) {
+    Account account = accountRepository.findByAccountNumber(accountNumber)
+        .orElseThrow(() -> <span class="kw">new</span> AccountNotFoundException(...));
+
+    <span class="kw">if</span> (account.getStatus() == AccountStatus.FROZEN)
+        <span class="kw">throw new</span> AccountFrozenException(<span class="str">"Account is frozen"</span>);
+
+    <span class="kw">if</span> (account.getBalance().compareTo(amount) < <span class="num">0</span>)
+        <span class="kw">throw new</span> InsufficientFundsException(<span class="str">"Balance: "</span> + account.getBalance());
+
+    account.setBalance(account.getBalance().subtract(amount));
+    accountRepository.save(account);
+    <span class="cmt">// If save fails, entire transaction rolls back</span>
+}</pre>
+<div class="callout explain"><span class="callout-icon">✅</span><div>We use <code>BigDecimal</code> (not double or float) for money! Double arithmetic has floating-point errors — 10.00 - 9.99 might be 0.009999999 in double. BigDecimal is exact for decimal arithmetic.</div></div>
+</div>
+
+<div class="section" id="s7">
+<div class="section-header"><div class="step-num">04</div><h2>Step 4: Transaction Service</h2></div>
+<h3>Transfer Flow</h3>
+<pre><span class="cmt">// Customer calls: POST /api/transactions/transfer</span>
+<span class="kw">public</span> ApiResponse transfer(String userId, TransferRequest req) {
+    <span class="cmt">// 1. Validate: fromAccount != toAccount</span>
+    <span class="kw">if</span> (req.getFromAccount().equals(req.getToAccount()))
+        <span class="kw">throw new</span> TransactionException(<span class="str">"Cannot transfer to same account"</span>);
+
+    <span class="cmt">// 2. Create transaction record</span>
+    String txnId = <span class="str">"TXN-"</span> + UUID.randomUUID().toString().substring(<span class="num">0</span>, <span class="num">12</span>).toUpperCase();
+    Transaction txn = Transaction.builder()...build();
+    transactionRepository.save(txn);
+
+    <span class="cmt">// 3. Publish to Kafka (async — returns immediately)</span>
+    kafkaTemplate.send(<span class="str">"transfer.initiated"</span>, Map.of(
+        <span class="str">"transactionId"</span>, txnId,
+        <span class="str">"fromAccount"</span>, req.getFromAccount(),
+        <span class="str">"amount"</span>, req.getAmount().toString()...
+    ));
+
+    <span class="cmt">// 4. Also trigger fraud check asynchronously</span>
+    kafkaTemplate.send(<span class="str">"fraud.check.request"</span>, Map.of(...));
+
+    <span class="cmt">// 5. Return success immediately (don't wait for fraud check)</span>
+    <span class="kw">return</span> ApiResponse.success(mapToResponse(txn), <span class="str">"Transfer initiated"</span>);
+}</pre>
+<h3>Transaction Modes</h3>
+<table>
+<tr><th>Mode</th><th>Speed</th><th>Limit</th><th>Timing</th></tr>
+<tr><td>IMPS</td><td>Instant</td><td>Up to ₹5 Lakh</td><td>24×7, 365 days</td></tr>
+<tr><td>NEFT</td><td>Batch (hourly)</td><td>No limit</td><td>Bank working hours</td></tr>
+<tr><td>RTGS</td><td>Instant</td><td>Min ₹2 Lakh</td><td>Bank working hours</td></tr>
+<tr><td>UPI</td><td>Instant</td><td>Up to ₹1 Lakh</td><td>24×7, 365 days</td></tr>
+</table>
+</div>
+
+<div class="section" id="s8">
+<div class="section-header"><div class="step-num">05</div><h2>Step 5: Loan Service — EMI Formula</h2></div>
+<h3>EMI Calculation</h3>
+<pre><span class="cmt">// EMI = P × r × (1+r)^n / ((1+r)^n - 1)</span>
+<span class="cmt">// P = Principal, r = monthly rate = annual/1200, n = months</span>
+
+<span class="kw">private</span> BigDecimal calculateEmi(BigDecimal principal, BigDecimal annualRate, <span class="kw">int</span> months) {
+    <span class="kw">double</span> r = annualRate.divide(BigDecimal.valueOf(<span class="num">1200</span>), <span class="num">10</span>, HALF_UP).doubleValue();
+    <span class="kw">double</span> n = months, p = principal.doubleValue();
+    <span class="kw">double</span> emi = p * r * Math.pow(<span class="num">1</span> + r, n) / (Math.pow(<span class="num">1</span> + r, n) - <span class="num">1</span>);
+    <span class="kw">return</span> BigDecimal.valueOf(emi).setScale(<span class="num">2</span>, HALF_UP);
+}
+
+<span class="cmt">// Example: ₹5,00,000 Personal Loan, 12% p.a., 36 months</span>
+<span class="cmt">// r = 12/1200 = 0.01</span>
+<span class="cmt">// EMI = 500000 × 0.01 × (1.01)^36 / ((1.01)^36 - 1) = ₹16,607.15</span></pre>
+<h3>Interest Rates by Type</h3>
+<table>
+<tr><th>Type</th><th>Rate</th><th>Type</th><th>Rate</th></tr>
+<tr><td>PERSONAL</td><td>12.00% p.a.</td><td>HOME</td><td>8.50% p.a.</td></tr>
+<tr><td>VEHICLE</td><td>9.50% p.a.</td><td>EDUCATION</td><td>7.50% p.a.</td></tr>
+<tr><td>BUSINESS</td><td>14.00% p.a.</td><td>GOLD</td><td>10.00% p.a.</td></tr>
+</table>
+<div class="callout tip"><span class="callout-icon">💡</span><div><strong>Interview Answer:</strong> "I implemented the standard reducing balance EMI formula. Each EMI pays interest on the remaining principal. So early EMIs have higher interest component; later EMIs have higher principal component. I generate the full amortization table on loan approval, showing each month's principal and interest breakdown."</div></div>
+</div>
+
+<div class="section" id="s9">
+<div class="section-header"><div class="step-num">06</div><h2>Step 6: Fraud Detection — Rule-Based Scoring</h2></div>
+<pre><span class="kw">public void</span> analyzeTransaction(Map txnData) {
+    BigDecimal amount = <span class="kw">new</span> BigDecimal(txnData.get(<span class="str">"amount"</span>).toString());
+    <span class="kw">int</span> riskScore = <span class="num">0</span>;
+
+    <span class="cmt">// Rule 1: Large transaction</span>
+    <span class="kw">if</span> (amount.compareTo(BigDecimal.valueOf(<span class="num">500000</span>)) > <span class="num">0</span>) riskScore += <span class="num">40</span>;
+
+    <span class="cmt">// Rule 2: High-risk amount</span>
+    <span class="kw">if</span> (amount.compareTo(BigDecimal.valueOf(<span class="num">100000</span>)) > <span class="num">0</span>) riskScore += <span class="num">20</span>;
+
+    <span class="cmt">// Rule 3: Debit transactions are higher risk</span>
+    <span class="kw">if</span> (<span class="str">"WITHDRAWAL"</span>.equals(type) || <span class="str">"TRANSFER"</span>.equals(type)) riskScore += <span class="num">10</span>;
+
+    <span class="cmt">// Rule 4: Round numbers suggest structuring</span>
+    <span class="kw">if</span> (amount.remainder(BigDecimal.valueOf(<span class="num">10000</span>)).equals(BigDecimal.ZERO)) riskScore += <span class="num">5</span>;
+
+    <span class="kw">if</span> (riskScore >= <span class="num">30</span>) {
+        <span class="cmt">// Create FraudAlert record + publish to "fraud.alert" Kafka topic</span>
+        createAlertAndNotify(txnData, riskScore);
+    }
+}</pre>
+</div>
+
+<div class="section" id="s10">
+<div class="section-header"><div class="step-num">07</div><h2>Step 7: Notification Service — Kafka Consumers</h2></div>
+<pre><span class="ann">@Service</span>
+<span class="kw">public class</span> NotificationEventConsumer {
+
+    <span class="ann">@KafkaListener</span>(topics = <span class="str">"user.registered"</span>, groupId = <span class="str">"notification-service-group"</span>)
+    <span class="kw">public void</span> handleUserRegistered(Map&lt;String, Object&gt; event) {
+        <span class="cmt">// Receives: {userId, fullName, email, registeredAt}</span>
+        log.info(<span class="str">"Sending welcome email to: {}"</span>, event.get(<span class="str">"email"</span>));
+        <span class="cmt">// In production: emailService.sendWelcomeEmail(email, name)</span>
+    }
+
+    <span class="ann">@KafkaListener</span>(topics = <span class="str">"fraud.alert"</span>, ...)
+    <span class="kw">public void</span> handleFraudAlert(Map event) {
+        log.warn(<span class="str">"FRAUD ALERT: riskScore={}"</span>, event.get(<span class="str">"riskScore"</span>));
+        <span class="cmt">// In production: send SMS to customer, notify security team, block account</span>
+    }
+}</pre>
+<div class="callout explain"><span class="callout-icon">✅</span><div>The Notification Service is stateless — it doesn't have a database. It just consumes Kafka events and triggers notifications. If it goes down, Kafka holds the messages (based on consumer group offset) and delivers them when it comes back up.</div></div>
+</div>
+
+<div class="section" id="s11">
+<div class="section-header"><div class="step-num">08</div><h2>Step 8: API Gateway — Spring Cloud Gateway</h2></div>
+<pre><span class="cmt"># application.yml — Gateway routes</span>
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: http://user-service:8081      <span class="cmt"># Docker service name</span>
+          predicates:
+            - Path=/api/auth/**, /api/users/**   <span class="cmt"># Match these paths</span>
+          filters:
+            - name: CircuitBreaker             <span class="cmt"># If service is down → fallback</span>
+              args:
+                name: userServiceCB
+                fallbackUri: forward:/fallback/user
+            - AddRequestHeader=X-Gateway-Source, api-gateway</pre>
+<div class="callout tip"><span class="callout-icon">💡</span><div><strong>Interview Answer:</strong> "I use Spring Cloud Gateway as the single entry point. It routes requests based on URL path prefix, adds circuit breakers (if a service is down, it returns a 503 fallback instead of hanging), injects request headers for traceability, and handles CORS centrally so each service doesn't need to configure it."</div></div>
+</div>
+
+<div class="section" id="s12">
+<div class="section-header"><div class="step-num">09</div><h2>Step 9: Redis — When and Why</h2></div>
+<table>
+<tr><th>Use Case</th><th>How It Works</th><th>TTL</th></tr>
+<tr><td>JWT Blacklist</td><td>When user logs out, add token hash to Redis. JwtFilter checks Redis before allowing request.</td><td>Token's remaining expiry</td></tr>
+<tr><td>Balance Cache</td><td>Cache account balance in Redis. Next request reads from Redis instead of PostgreSQL.</td><td>60 seconds</td></tr>
+<tr><td>OTP Storage</td><td>Store OTP with key=phone. Auto-expires after 5 mins — no cleanup job needed.</td><td>5 minutes</td></tr>
+<tr><td>Rate Limiting</td><td>Increment counter per userId per minute. Block if exceeds threshold.</td><td>1 minute</td></tr>
+</table>
+<div class="callout tip"><span class="callout-icon">💡</span><div><strong>Interview Answer on Redis:</strong> "I use Redis for three things: JWT blacklisting — after logout, the token is added to Redis so it's invalidated even before natural expiry. Balance caching — balance queries are very common; a 60-second cache reduces PostgreSQL load dramatically. OTP storage — Redis TTL feature means OTPs auto-expire without any scheduled job."</div></div>
+</div>
+
+<div class="section" id="s13">
+<div class="section-header"><div class="step-num">10</div><h2>Step 10: React Frontend</h2></div>
+<pre><span class="cmt"># Create React app with Vite</span>
+npm create vite@latest frontend -- --template react
+cd frontend
+npm install
+npm install axios react-router-dom recharts
+npm run dev
+<span class="cmt"># → Opens at http://localhost:3000</span></pre>
+<h3>Axios Interceptors</h3>
+<pre><span class="cmt">// Auto-add JWT token to every request</span>
+api.interceptors.request.use(config => {
+    const token = localStorage.getItem(<span class="str">'bankflow_token'</span>);
+    if (token) config.headers.Authorization = <span class="str">`Bearer ${token}`</span>;
+    return config;
+});
+
+<span class="cmt">// Auto-redirect to login on 401</span>
+api.interceptors.response.use(res => res, err => {
+    if (err.response?.status === 401) {
+        localStorage.removeItem(<span class="str">'bankflow_token'</span>);
+        window.location.href = <span class="str">'/login'</span>;
+    }
+    return Promise.reject(err);
+});</pre>
+</div>
+
+<div class="section" id="s14">
+<div class="section-header"><div class="step-num">11</div><h2>Step 11: Docker Setup</h2></div>
+<pre><span class="cmt"># docker-compose.yml structure</span>
+services:
+  zookeeper:   <span class="cmt">← Kafka needs this to manage cluster</span>
+  kafka:       <span class="cmt">← Depends on zookeeper ✅ (health check)</span>
+  redis:       <span class="cmt">← Cache layer</span>
+  postgres:    <span class="cmt">← Creates 5 databases via init.sql</span>
+  user-service:   <span class="cmt">← Depends on postgres ✅, redis ✅, kafka ✅</span>
+  account-service: <span class="cmt">← Same dependencies</span>
+  ... (all 7 services)
+  api-gateway: <span class="cmt">← Depends on all backend services</span>
+  frontend:    <span class="cmt">← Nginx serves React app</span></pre>
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>Notice <code>condition: service_healthy</code> in depends_on — this waits for the actual health check to pass, not just for the container to start. Without this, your Spring Boot service might fail because Kafka/PostgreSQL isn't ready.</div></div>
+</div>
+
+<div class="section" id="s15">
+<div class="section-header"><div class="step-num">12</div><h2>Step 12: Running the Project</h2></div>
+<pre><span class="cmt"># Option A: Full Docker stack (recommended)</span>
+cd bankflow
+docker-compose up --build
+<span class="cmt"># First time: 10-15 minutes (downloads images, builds services)</span>
+<span class="cmt"># Frontend: http://localhost:3000</span>
+<span class="cmt"># API Gateway: http://localhost:8080</span>
+<span class="cmt"># Swagger: http://localhost:8081/swagger-ui.html</span>
+
+<span class="cmt"># Option B: Local development</span>
+docker-compose up -d zookeeper kafka redis postgres
+cd user-service && mvn spring-boot:run          <span class="cmt"># Terminal 1</span>
+cd account-service && mvn spring-boot:run       <span class="cmt"># Terminal 2</span>
+cd transaction-service && mvn spring-boot:run   <span class="cmt"># Terminal 3</span>
+cd loan-service && mvn spring-boot:run          <span class="cmt"># Terminal 4</span>
+cd frontend && npm run dev                       <span class="cmt"># Terminal 5</span></pre>
+</div>
+
+<div class="section" id="s16">
+<div class="section-header"><div class="step-num">13</div><h2>Step 13: API Testing</h2></div>
+<h4>1. Login as Admin</h4>
+<pre>POST http://localhost:8080/api/auth/login
+{ "email": "admin@bankflow.com", "password": "Admin@123" }
+→ Copy the "accessToken" from response</pre>
+<h4>2. Register a Customer</h4>
+<pre>POST http://localhost:8080/api/auth/register
+{ "fullName":"Alice Smith","email":"alice@test.com","phone":"9876543210","password":"Pass1234!" }</pre>
+<h4>3. Open Account (with token)</h4>
+<pre>POST http://localhost:8080/api/accounts
+Authorization: Bearer [paste token]
+{ "accountType": "SAVINGS", "branch": "Main Branch" }</pre>
+<h4>4. Deposit Money</h4>
+<pre>POST http://localhost:8080/api/transactions/deposit
+{ "accountNumber": "XXXXXXXXXXXXXXXX", "amount": 50000, "description": "Initial deposit" }</pre>
+<h4>5. Apply for Loan</h4>
+<pre>POST http://localhost:8080/api/loans/apply
+{ "loanType": "PERSONAL", "amount": 200000, "tenureMonths": 24, "accountNumber": "XXXX" }</pre>
+</div>
+
+<div class="section" id="s17">
+<div class="section-header"><div class="step-num">🎯</div><h2>Step 14: Interview Q&A (12 Questions)</h2></div>
+
+<div class="qa-item"><div class="qa-q">Q: Explain your BankFlow project in 2 minutes</div>
+<div class="qa-a">A: "I built a full enterprise banking system using microservices architecture. It has 7 Spring Boot services: API Gateway routes requests and validates JWTs; User Service handles registration and authentication with JWT and BCrypt; Account Service manages savings and current accounts; Transaction Service processes deposits, withdrawals, and IMPS/NEFT/RTGS transfers; Loan Service handles loan applications with EMI calculation; Notification Service sends alerts via Kafka; and Fraud Detection scores every transaction using rule-based logic. The whole system is containerized with Docker Compose, uses Redis for caching and JWT blacklisting, Apache Kafka for async event communication, and has a React 18 frontend."</div></div>
+
+<div class="qa-item"><div class="qa-q">Q: Why 7 microservices? Why not one app?</div>
+<div class="qa-a">A: "Each service has a single responsibility. If the Loan Service crashes, customers can still check their balance and make transactions. Each service can be scaled independently — if transfer volume is high, I can run 5 Transaction Service instances without touching other services. Each service has its own PostgreSQL database (database-per-service pattern), so changes to one schema don't affect others. Teams can work independently, deploy independently, and use different technologies if needed."</div></div>
+
+<div class="qa-item"><div class="qa-q">Q: How does JWT authentication work in your project?</div>
+<div class="qa-a">A: "JWT is stateless authentication. When a user logs in, the User Service creates a JSON Web Token signed with our secret key using HS256 algorithm. The token contains the user's email and role in the payload. It's returned to the React client which stores it in localStorage. Every subsequent API call includes it in the Authorization header. Each backend service has a JwtAuthenticationFilter (extends OncePerRequestFilter) that extracts the token, verifies the signature using the same secret key, checks expiry, and sets the authenticated user in Spring's SecurityContext. If signature is invalid or token is expired, it returns 401 Unauthorized."</div></div>
+
+<div class="qa-item"><div class="qa-q">Q: What is Redis and how did you use it?</div>
+<div class="qa-a">A: "Redis is an in-memory key-value data store. I use it in three ways: First, JWT blacklisting — when a user logs out, I add the token to Redis with TTL equal to its remaining expiry. The JWT filter checks Redis before accepting any token, so logged-out tokens are immediately rejected even though they're technically still valid JWT tokens. Second, account balance caching — I cache balances for 60 seconds to reduce PostgreSQL queries on the accounts_db. Third, OTP storage with 5-minute TTL — Redis automatically expires the key, no cleanup job needed."</div></div>
+
+<div class="qa-item"><div class="qa-q">Q: How does fund transfer work between services?</div>
+<div class="qa-a">A: "The Transaction Service receives the transfer request and creates a transaction record. It then publishes two Kafka events asynchronously: one to 'transfer.initiated' (picked up by Notification Service to send SMS/email) and one to 'fraud.check.request' (picked up by Fraud Detection to analyze the transaction). The Transaction Service returns success immediately without waiting — this is non-blocking and gives customers instant confirmation. In a production system, I'd also call the Account Service to debit/credit balances, but that's via REST or Kafka."</div></div>
+
+<div class="qa-item"><div class="qa-q">Q: How does fraud detection work?</div>
+<div class="qa-a">A: "Every transaction triggers a Kafka message to 'fraud.check.request'. The Fraud Detection Service applies 4 rules: amounts over ₹5 lakh add 40 risk points, amounts over ₹1 lakh add 20, debit transactions add 10, round numbers (potential structuring) add 5. If the total score reaches 30 or above, a FraudAlert record is created in the fraud_db and a 'fraud.alert' Kafka event is published — which triggers the Notification Service to send alerts to both the customer and the security team."</div></div>
+
+<div class="qa-item"><div class="qa-q">Q: Explain the EMI calculation</div>
+<div class="qa-a">A: "EMI uses the reducing balance formula: EMI = P × r × (1+r)^n / ((1+r)^n − 1), where P is the principal, r is the monthly interest rate (annual rate / 1200), and n is the tenure in months. For example, a ₹5 lakh Personal Loan at 12% for 36 months gives ₹16,607/month. When a loan is approved, I generate the full amortization schedule — a table showing each monthly EMI split into principal and interest components. Early EMIs have more interest; later ones have more principal. The schedule is stored in the emi_schedule table."</div></div>
+
+<div class="qa-item"><div class="qa-q">Q: What is a circuit breaker in the API Gateway?</div>
+<div class="qa-a">A: "A circuit breaker prevents cascade failures. If the Account Service is down, without a circuit breaker, every request to /api/accounts would hang for the connection timeout (maybe 30 seconds) before failing. The circuit breaker monitors failures and after a threshold, 'opens' — immediately returning a fallback response (HTTP 503) instead of trying to connect to the failed service. This protects the gateway from thread exhaustion and gives customers an immediate, meaningful error instead of hanging. I configured it in Spring Cloud Gateway with fallback URIs for each service."</div></div>
+
+<div class="qa-item"><div class="qa-q">Q: How would you scale BankFlow for high traffic?</div>
+<div class="qa-a">A: "Each service is stateless (JWT, no server sessions), so I can run multiple instances behind a load balancer. For example, 5 Transaction Service instances. Kafka partitions allow parallel processing — 10 partitions means 10 consumers can process simultaneously. PostgreSQL gets read replicas for heavy read workloads. Redis cluster for high availability. The API Gateway would be fronted with an Nginx load balancer. For even higher scale, I'd add Kubernetes for orchestration, horizontal pod autoscaling based on CPU/memory metrics."</div></div>
+
+<div class="qa-item"><div class="qa-q">Q: What happens if Kafka goes down?</div>
+<div class="qa-a">A: "Kafka has built-in fault tolerance with message persistence. Messages are stored on disk even after delivery. If the Notification Service is down, Kafka holds the messages (commits offset only after processing). When the service restarts, it re-reads from the last committed offset. For producer side, if Kafka is unavailable, I'd implement a retry mechanism with exponential backoff and store failed events in an outbox table as a fallback pattern. For the transaction flow, the core transaction still succeeds — only notifications might be delayed."</div></div>
+
+<div class="qa-item"><div class="qa-q">Q: How is BCrypt different from SHA-256?</div>
+<div class="qa-a">A: "Both are hash functions, but BCrypt is designed specifically for passwords. SHA-256 is fast — an attacker can compute billions per second trying to brute force. BCrypt is intentionally slow — it has a configurable 'work factor' (cost parameter). BCrypt also automatically generates a unique random salt for each password, so two users with the same password have different hashes (preventing rainbow table attacks). With $10 work factor, BCrypt takes ~100ms to hash — fast enough for login but too slow for brute force attacks."</div></div>
+
+<div class="qa-item"><div class="qa-q">Q: What is the difference between @Transactional at service vs repository level?</div>
+<div class="qa-a">A: "@Transactional at the service method level wraps the entire method in one database transaction. If anything throws inside the method, all database changes are rolled back. At repository level, Spring Data auto-applies @Transactional to individual CRUD methods. I use service-level @Transactional for operations that touch multiple database entities — like debit+credit in a transfer. If the credit fails after the debit, @Transactional ensures the debit is also rolled back, preventing money from disappearing."</div></div>
+</div>
+
+</div>
+<div style="background:#0f172a;color:rgba(255,255,255,.6);text-align:center;padding:2rem;font-size:.82rem;margin-top:2rem;">
+<strong style="color:white">BankFlow — Step-by-Step Build Guide</strong><br/>
+Java 17 · Spring Boot 3.2 · React 18 · Kafka · Redis · PostgreSQL · Docker
+</div>
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'})});
+});
+</script>
+</body>
+</html>

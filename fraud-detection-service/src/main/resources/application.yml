@@ -1,0 +1,45 @@
+server:
+  port: 8086
+spring:
+  application:
+    name: fraud-detection-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/fraud_db
+    username: bankflow
+    password: bankflow123
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: fraud-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "java.util,java.lang"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+fraud:
+  rules:
+    max-single-transaction: 500000
+    max-daily-transactions: 10
+    max-daily-amount: 1000000
+    velocity-window-minutes: 60
+    high-risk-amount-threshold: 100000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

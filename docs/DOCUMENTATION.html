@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BankFlow — Full Enterprise Banking System Documentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#2563eb;--blue-lt:#dbeafe;--green:#059669;--green-lt:#d1fae5;--amber:#d97706;--amber-lt:#fef3c7;--red:#dc2626;--red-lt:#fee2e2;--purple:#7c3aed;--gray1:#111827;--gray2:#374151;--gray3:#6b7280;--gray5:#e5e7eb;--gray6:#f9fafb;--white:#fff;--mono:'Courier New',monospace}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--gray1);background:var(--white);line-height:1.65;font-size:15px}
+.print-bar{position:fixed;top:0;left:0;right:0;background:#0f172a;color:white;padding:.5rem 2rem;display:flex;justify-content:space-between;align-items:center;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.print-btn{background:var(--blue);color:white;border:none;padding:.4rem 1.2rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:.85rem}
+.cover{min-height:100vh;background:linear-gradient(145deg,#0f172a 0%,#1e3a5f 40%,#1d4ed8 100%);color:white;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:4rem 2rem;margin-top:2.5rem}
+.cover-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:.35rem 1.1rem;border-radius:20px;margin-bottom:2rem}
+.cover h1{font-size:3rem;font-weight:800;line-height:1.15;margin-bottom:1rem}
+.cover h1 span{color:#93c5fd}
+.cover-tags{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;max-width:700px;margin:1.5rem 0}
+.cover-tag{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:white;padding:.3rem .9rem;border-radius:20px;font-size:.78rem;font-weight:500}
+.cover-stats{margin-top:2rem;opacity:.6;font-size:.82rem;display:flex;gap:2rem;flex-wrap:wrap;justify-content:center}
+.wrapper{max-width:960px;margin:0 auto;padding:2rem}
+.section{padding:3.5rem 0 2rem}
+.section-header{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;padding-bottom:1rem;border-bottom:2px solid var(--gray5)}
+.section-num{background:var(--blue);color:white;font-size:.78rem;font-weight:800;width:2.2rem;height:2.2rem;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+h2{font-size:1.4rem;font-weight:700}
+h3{font-size:1rem;font-weight:700;margin:1.5rem 0 .6rem}
+h4{font-size:.9rem;font-weight:700;margin:1rem 0 .4rem;color:var(--gray2)}
+p{color:var(--gray2);margin-bottom:.8rem}
+ul,ol{padding-left:1.4rem;color:var(--gray2);margin-bottom:.8rem}
+li{margin-bottom:.35rem}
+.toc{background:var(--gray6);border-radius:12px;padding:2rem;margin:3rem 0 2rem}
+.toc h2{font-size:1.3rem;margin-bottom:1rem;color:var(--blue)}
+.toc ol{padding-left:1.5rem}
+.toc a{color:var(--blue);text-decoration:none;font-weight:500}
+.toc a:hover{text-decoration:underline}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:.8rem 0}
+thead tr{background:var(--gray1);color:white}
+th{padding:.7rem 1rem;text-align:left;font-weight:600;font-size:.8rem;letter-spacing:.03em}
+tbody tr{border-bottom:1px solid var(--gray5)}
+tbody tr:hover{background:var(--gray6)}
+td{padding:.65rem 1rem;color:var(--gray2);vertical-align:top}
+td:first-child{font-weight:600;color:var(--gray1)}
+.table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--gray5);margin:.8rem 0}
+pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:1.2rem 1.4rem;font-family:var(--mono);font-size:.82rem;line-height:1.9;overflow-x:auto;margin:.8rem 0}
+code{font-family:var(--mono);font-size:.82rem;background:var(--gray5);color:#c026d3;padding:.15rem .4rem;border-radius:4px}
+pre code{background:none;color:inherit;padding:0}
+.m{display:inline-block;font-size:.72rem;font-weight:700;padding:.18rem .55rem;border-radius:4px;letter-spacing:.04em}
+.m-get{background:var(--green-lt);color:var(--green)}
+.m-post{background:var(--blue-lt);color:var(--blue)}
+.m-put{background:var(--amber-lt);color:var(--amber)}
+.m-delete{background:var(--red-lt);color:var(--red)}
+.callout{border-radius:8px;padding:.9rem 1.1rem;margin:1rem 0;display:flex;gap:.7rem;align-items:flex-start;font-size:.88rem}
+.callout-icon{font-size:1rem;flex-shrink:0;margin-top:.1rem}
+.tip{background:var(--amber-lt);border-left:3px solid var(--amber)}
+.explain{background:var(--green-lt);border-left:3px solid var(--green)}
+.warn{background:var(--red-lt);border-left:3px solid var(--red)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin:1.2rem 0}
+.card{border:1px solid var(--gray5);border-radius:10px;padding:1.2rem;background:var(--gray6)}
+.card-icon{font-size:1.5rem;margin-bottom:.5rem}
+.card-title{font-size:.88rem;font-weight:700;margin-bottom:.3rem}
+.card-port{font-size:.78rem;font-weight:600;color:var(--blue);margin-top:.4rem}
+.card-desc{font-size:.82rem;color:var(--gray3);line-height:1.5}
+.svc-card{border-radius:12px;padding:1.4rem;margin:1.5rem 0;border-left:4px solid}
+.svc-blue{background:#eff6ff;border-color:var(--blue)}
+.svc-green{background:#f0fdf4;border-color:var(--green)}
+.svc-amber{background:#fffbeb;border-color:var(--amber)}
+.svc-red{background:#fef2f2;border-color:var(--red)}
+.svc-purple{background:#faf5ff;border-color:var(--purple)}
+.topic-row{display:flex;align-items:center;gap:1rem;padding:.7rem 1rem;border-radius:8px;margin:.4rem 0;background:var(--gray6);border:1px solid var(--gray5)}
+.topic-name{font-family:var(--mono);font-size:.82rem;font-weight:600;color:var(--blue);background:var(--blue-lt);padding:.2rem .6rem;border-radius:5px;white-space:nowrap}
+.qa-item{border:1px solid var(--gray5);border-radius:8px;margin:.8rem 0;overflow:hidden}
+.qa-q{background:var(--blue);color:white;padding:.8rem 1rem;font-weight:600;font-size:.88rem}
+.qa-a{padding:.8rem 1rem;font-size:.85rem;color:var(--gray2);background:var(--gray6)}
+.stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1rem;margin:1.5rem 0}
+.stat-box{border-radius:10px;padding:1.2rem;text-align:center;border:1px solid var(--gray5);background:var(--gray6)}
+.stat-num{font-size:2rem;font-weight:800;color:var(--blue);line-height:1}
+.stat-label{font-size:.78rem;color:var(--gray3);margin-top:.3rem;font-weight:500}
+footer{background:#0f172a;color:rgba(255,255,255,.6);text-align:center;padding:2rem;margin-top:4rem;font-size:.82rem}
+@media print{.print-bar{display:none}.cover{margin-top:0;page-break-after:always}.section{page-break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="print-bar"><span>🏦 BankFlow — Full Enterprise Banking System Documentation</span><button class="print-btn" onclick="window.print()">🖨️ Save as PDF</button></div>
+
+<div class="cover">
+<div class="cover-badge">Technical Documentation · v1.0.0</div>
+<h1>BankFlow<br/><span>Full Enterprise Banking System</span></h1>
+<p style="font-size:1.1rem;opacity:.8;max-width:600px;margin-bottom:1.5rem">A production-grade microservices banking platform with JWT auth, Kafka event streaming, Redis caching, fraud detection, and a React dashboard.</p>
+<div class="cover-tags">
+<span class="cover-tag">Java 17</span><span class="cover-tag">Spring Boot 3.2</span><span class="cover-tag">React 18</span>
+<span class="cover-tag">Apache Kafka</span><span class="cover-tag">Redis</span><span class="cover-tag">PostgreSQL × 5</span>
+<span class="cover-tag">JWT Auth</span><span class="cover-tag">Docker</span><span class="cover-tag">Jenkins CI/CD</span>
+<span class="cover-tag">Fraud Detection</span><span class="cover-tag">EMI Engine</span><span class="cover-tag">Swagger/OpenAPI</span>
+</div>
+<div class="cover-stats">
+<span>🔧 7 Microservices</span>
+<span>📦 150+ Source Files</span>
+<span>📨 10 Kafka Topics</span>
+<span>🗄️ 5 PostgreSQL DBs</span>
+<span>⚡ Redis Cache</span>
+<span>✅ Unit Tests</span>
+</div>
+</div>
+
+<div class="wrapper">
+
+<div class="toc">
+<h2>📋 Table of Contents</h2>
+<ol>
+<li><a href="#s1">Project Overview</a></li>
+<li><a href="#s2">System Architecture</a></li>
+<li><a href="#s3">Technology Stack</a></li>
+<li><a href="#s4">Microservices Breakdown</a></li>
+<li><a href="#s5">Kafka Event-Driven Communication</a></li>
+<li><a href="#s6">Redis Integration</a></li>
+<li><a href="#s7">REST API Reference</a></li>
+<li><a href="#s8">Database Schema</a></li>
+<li><a href="#s9">Security Architecture (JWT + RBAC)</a></li>
+<li><a href="#s10">Fraud Detection Engine</a></li>
+<li><a href="#s11">Loan EMI Engine</a></li>
+<li><a href="#s12">React Frontend</a></li>
+<li><a href="#s13">Docker & Infrastructure</a></li>
+<li><a href="#s14">CI/CD Pipeline</a></li>
+<li><a href="#s15">How to Run</a></li>
+</ol>
+</div>
+
+<section id="s1" class="section">
+<div class="section-header"><div class="section-num">01</div><h2>Project Overview</h2></div>
+<p><strong>BankFlow</strong> is a full-stack, enterprise-grade banking system built on microservices architecture. It simulates the core functionality of a modern digital bank: customer registration, account management, fund transfers, loan processing, and transaction fraud detection — all with a React web dashboard.</p>
+<div class="stats-bar">
+<div class="stat-box"><div class="stat-num">7</div><div class="stat-label">Microservices</div></div>
+<div class="stat-box"><div class="stat-num">150+</div><div class="stat-label">Source Files</div></div>
+<div class="stat-box"><div class="stat-num">10</div><div class="stat-label">Kafka Topics</div></div>
+<div class="stat-box"><div class="stat-num">5</div><div class="stat-label">PostgreSQL DBs</div></div>
+<div class="stat-box"><div class="stat-num">30+</div><div class="stat-label">REST Endpoints</div></div>
+<div class="stat-box"><div class="stat-num">4</div><div class="stat-label">Fraud Rules</div></div>
+</div>
+<h3>What Does BankFlow Do?</h3>
+<ul>
+<li><strong>User Management:</strong> Customer registration with phone validation, JWT login, KYC verification, admin role management</li>
+<li><strong>Account Management:</strong> Open SAVINGS/CURRENT/FIXED_DEPOSIT accounts, balance inquiry, freeze/unfreeze</li>
+<li><strong>Transactions:</strong> Deposit, Withdraw, Fund Transfers via IMPS/NEFT/RTGS/UPI with real-time Kafka events</li>
+<li><strong>Loan Processing:</strong> Apply for 6 loan types, EMI calculation, amortization schedule, admin approval workflow</li>
+<li><strong>Fraud Detection:</strong> Rule-based risk scoring on every transaction, automatic alert generation</li>
+<li><strong>Notifications:</strong> Kafka-driven email/SMS alerts for every banking event</li>
+<li><strong>React Dashboard:</strong> Full-featured web app for all banking operations</li>
+</ul>
+</section>
+
+<section id="s2" class="section">
+<div class="section-header"><div class="section-num">02</div><h2>System Architecture</h2></div>
+<pre>
+  React Frontend (:3000)
+         │
+         │  HTTP Requests + Authorization: Bearer [JWT]
+         ▼
+  ┌──────────────────────────────────────────────────────────┐
+  │            API Gateway (:8080)                           │
+  │  Spring Cloud Gateway · JWT Validation · Circuit Breaker │
+  └──┬───────┬───────┬───────┬───────────────────────────────┘
+     │       │       │       │
+     ▼       ▼       ▼       ▼
+  User    Account  Txn    Loan    (also: Fraud :8086)
+  :8081   :8082   :8083  :8084
+     │       │       │       │
+     └───────┴───┬───┴───────┘
+                 │  Apache Kafka (async events)
+     ┌───────────┴───────────────┐
+     │  Notification Service     │
+     │       :8085               │
+     │  (email/SMS alerts)       │
+     └───────────────────────────┘
+
+  Infrastructure:
+  ├── Kafka + Zookeeper  (event streaming)
+  ├── Redis :6379        (cache + JWT blacklist)
+  └── PostgreSQL :5432   (users_db, accounts_db, transactions_db, loans_db, fraud_db)
+</pre>
+<h3>Service Roles</h3>
+<div class="card-grid">
+<div class="card"><div class="card-icon">🌐</div><div class="card-title">API Gateway</div><div class="card-port">:8080</div><div class="card-desc">Routes all requests, validates JWT, circuit breakers</div></div>
+<div class="card"><div class="card-icon">👤</div><div class="card-title">User Service</div><div class="card-port">:8081</div><div class="card-desc">Auth, profiles, KYC, roles</div></div>
+<div class="card"><div class="card-icon">🏦</div><div class="card-title">Account Service</div><div class="card-port">:8082</div><div class="card-desc">Accounts, balance, debit/credit</div></div>
+<div class="card"><div class="card-icon">💸</div><div class="card-title">Transaction Service</div><div class="card-port">:8083</div><div class="card-desc">Deposit, withdraw, transfers</div></div>
+<div class="card"><div class="card-icon">💰</div><div class="card-title">Loan Service</div><div class="card-port">:8084</div><div class="card-desc">Apply, approve, EMI schedule</div></div>
+<div class="card"><div class="card-icon">🔔</div><div class="card-title">Notification Service</div><div class="card-port">:8085</div><div class="card-desc">Kafka-driven email/SMS alerts</div></div>
+<div class="card"><div class="card-icon">🚨</div><div class="card-title">Fraud Detection</div><div class="card-port">:8086</div><div class="card-desc">Rule-based risk scoring</div></div>
+</div>
+</section>
+
+<section id="s3" class="section">
+<div class="section-header"><div class="section-num">03</div><h2>Technology Stack</h2></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Category</th><th>Technology</th><th>Version</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td>Language</td><td>Java</td><td>17</td><td>All backend services</td></tr>
+<tr><td>Framework</td><td>Spring Boot</td><td>3.2.0</td><td>Application framework, embedded Tomcat</td></tr>
+<tr><td>Security</td><td>Spring Security</td><td>6.x</td><td>Authentication filter chain, @PreAuthorize</td></tr>
+<tr><td>JWT</td><td>JJWT</td><td>0.12.3</td><td>HS256 token generation and validation</td></tr>
+<tr><td>ORM</td><td>Spring Data JPA</td><td>3.2.0</td><td>PostgreSQL repositories, Hibernate</td></tr>
+<tr><td>Cache</td><td>Redis</td><td>7.2</td><td>JWT blacklist, balance cache, rate limiting</td></tr>
+<tr><td>Messaging</td><td>Apache Kafka</td><td>7.5.0</td><td>Async event streaming between services</td></tr>
+<tr><td>Database</td><td>PostgreSQL</td><td>15</td><td>Persistent storage (5 separate databases)</td></tr>
+<tr><td>Gateway</td><td>Spring Cloud Gateway</td><td>2023.0.0</td><td>API routing, circuit breakers, CORS</td></tr>
+<tr><td>Frontend</td><td>React 18</td><td>18.2</td><td>Banking dashboard UI</td></tr>
+<tr><td>Build Tool (FE)</td><td>Vite</td><td>5.x</td><td>Fast React dev server and bundler</td></tr>
+<tr><td>Routing</td><td>React Router</td><td>v6</td><td>SPA navigation, protected routes</td></tr>
+<tr><td>HTTP Client</td><td>Axios</td><td>1.6</td><td>API calls with token interceptors</td></tr>
+<tr><td>API Docs</td><td>Swagger/OpenAPI</td><td>2.3.0</td><td>Auto-generated API documentation</td></tr>
+<tr><td>Containers</td><td>Docker Compose</td><td>3.8</td><td>Full stack orchestration</td></tr>
+<tr><td>CI/CD</td><td>Jenkins</td><td>Latest</td><td>Build, test, dockerize, deploy pipeline</td></tr>
+<tr><td>Boilerplate</td><td>Lombok</td><td>Latest</td><td>@Data, @Builder, @Slf4j auto-generation</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section id="s4" class="section">
+<div class="section-header"><div class="section-num">04</div><h2>Microservices Breakdown</h2></div>
+
+<div class="svc-card svc-blue">
+<h4>🌐 API Gateway (:8080)</h4>
+<p>Single entry point for all client requests. Routes to downstream services based on path prefix. Validates JWT tokens and applies circuit breakers. Configured with CORS for the React frontend.</p>
+<ul>
+<li><code>/api/auth/**</code>, <code>/api/users/**</code> → User Service (:8081)</li>
+<li><code>/api/accounts/**</code> → Account Service (:8082)</li>
+<li><code>/api/transactions/**</code> → Transaction Service (:8083)</li>
+<li><code>/api/loans/**</code> → Loan Service (:8084)</li>
+<li><code>/api/fraud/**</code> → Fraud Detection (:8086)</li>
+</ul>
+</div>
+
+<div class="svc-card svc-green">
+<h4>👤 User Service (:8081)</h4>
+<p>Handles all authentication and user management. The User entity implements Spring Security's <code>UserDetails</code> interface. Publishes <code>user.registered</code> event to Kafka on new registrations.</p>
+<ul>
+<li>User entity with <code>userId</code>, <code>email</code>, <code>phone</code>, <code>role</code>, <code>kycStatus</code></li>
+<li>Roles: <strong>CUSTOMER</strong>, <strong>ADMIN</strong></li>
+<li>KYC Status: PENDING → UNDER_REVIEW → VERIFIED | REJECTED</li>
+<li>Swagger UI: <code>http://localhost:8081/swagger-ui.html</code></li>
+</ul>
+</div>
+
+<div class="svc-card svc-amber">
+<h4>🏦 Account Service (:8082)</h4>
+<p>Manages bank accounts with real-time balance tracking. Generates 16-digit account numbers with duplicate checking. Provides debit/credit operations with @Transactional for atomicity.</p>
+<ul>
+<li>Types: SAVINGS, CURRENT, FIXED_DEPOSIT, RECURRING_DEPOSIT</li>
+<li>Status: ACTIVE, INACTIVE, FROZEN, CLOSED</li>
+<li>IFSC Code: BNKF0001234 | Currency: INR</li>
+<li>Admin can freeze/unfreeze accounts</li>
+</ul>
+</div>
+
+<div class="svc-card svc-blue">
+<h4>💸 Transaction Service (:8083)</h4>
+<p>Processes all financial movements. Every transaction publishes to Kafka for notifications and fraud checking. Supports pagination for transaction history.</p>
+<ul>
+<li>Types: DEPOSIT, WITHDRAWAL, TRANSFER_DEBIT, TRANSFER_CREDIT, LOAN_DISBURSEMENT</li>
+<li>Modes: IMPS (instant), NEFT (batch), RTGS (high value), UPI, CASH, ATM</li>
+<li>Publishes to: <code>transaction.created</code>, <code>transfer.initiated</code>, <code>fraud.check.request</code></li>
+</ul>
+</div>
+
+<div class="svc-card svc-amber">
+<h4>💰 Loan Service (:8084)</h4>
+<p>Full loan lifecycle management. Calculates EMIs using the standard formula and generates an amortization table with principal and interest breakdown per installment.</p>
+<ul>
+<li>Types: PERSONAL (12%), HOME (8.5%), VEHICLE (9.5%), EDUCATION (7.5%), BUSINESS (14%), GOLD (10%)</li>
+<li>Status: PENDING → APPROVED/REJECTED → DISBURSED → CLOSED</li>
+<li>EMI Formula: P × r × (1+r)^n / ((1+r)^n - 1)</li>
+</ul>
+</div>
+
+<div class="svc-card svc-purple">
+<h4>🔔 Notification Service (:8085)</h4>
+<p>Kafka consumer that listens on 7 topics and sends email/SMS notifications. Stateless — no database needed.</p>
+<p>Listens to: <code>user.registered</code>, <code>transaction.created</code>, <code>transfer.initiated</code>, <code>loan.approved</code>, <code>loan.rejected</code>, <code>account.created</code>, <code>fraud.alert</code></p>
+</div>
+
+<div class="svc-card svc-red">
+<h4>🚨 Fraud Detection Service (:8086)</h4>
+<p>Rule-based fraud analysis. Scores every transaction and creates alerts when risk exceeds threshold. Publishes fraud alerts to Kafka.</p>
+<ul>
+<li>Rule 1: Amount &gt; ₹5 Lakh → +40 points</li>
+<li>Rule 2: Amount &gt; ₹1 Lakh → +20 points</li>
+<li>Rule 3: WITHDRAWAL or TRANSFER → +10 points</li>
+<li>Rule 4: Round number (multiple of ₹10,000) → +5 points</li>
+<li>Score ≥ 30 → Create MEDIUM_RISK alert | Score ≥ 60 → HIGH_RISK alert</li>
+</ul>
+</div>
+</section>
+
+<section id="s5" class="section">
+<div class="section-header"><div class="section-num">05</div><h2>Kafka Event-Driven Communication</h2></div>
+<p>All inter-service communication happens asynchronously via Apache Kafka. Services are fully decoupled — they never call each other directly.</p>
+
+<div class="topic-row"><span class="topic-name">user.registered</span><span style="font-size:.85rem;color:var(--gray3)">Producer: User Service → Consumer: Notification</span></div>
+<div class="topic-row"><span class="topic-name">account.created</span><span style="font-size:.85rem;color:var(--gray3)">Producer: Account Service → Consumer: Notification</span></div>
+<div class="topic-row"><span class="topic-name">transaction.created</span><span style="font-size:.85rem;color:var(--gray3)">Producer: Transaction Service → Consumer: Notification, Fraud</span></div>
+<div class="topic-row"><span class="topic-name">transfer.initiated</span><span style="font-size:.85rem;color:var(--gray3)">Producer: Transaction Service → Consumer: Notification, Fraud</span></div>
+<div class="topic-row"><span class="topic-name">fraud.check.request</span><span style="font-size:.85rem;color:var(--gray3)">Producer: Transaction Service → Consumer: Fraud Detection</span></div>
+<div class="topic-row"><span class="topic-name">fraud.alert</span><span style="font-size:.85rem;color:var(--gray3)">Producer: Fraud Detection → Consumer: Notification</span></div>
+<div class="topic-row"><span class="topic-name">loan.applied</span><span style="font-size:.85rem;color:var(--gray3)">Producer: Loan Service → Consumer: Notification</span></div>
+<div class="topic-row"><span class="topic-name">loan.approved</span><span style="font-size:.85rem;color:var(--gray3)">Producer: Loan Service → Consumer: Notification</span></div>
+<div class="topic-row"><span class="topic-name">loan.rejected</span><span style="font-size:.85rem;color:var(--gray3)">Producer: Loan Service → Consumer: Notification</span></div>
+<div class="topic-row"><span class="topic-name">loan.disbursed</span><span style="font-size:.85rem;color:var(--gray3)">Producer: Loan Service → Consumer: Notification, Transaction</span></div>
+</section>
+
+<section id="s6" class="section">
+<div class="section-header"><div class="section-num">06</div><h2>Redis Integration</h2></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Use Case</th><th>Key Pattern</th><th>TTL</th><th>Service</th></tr></thead>
+<tbody>
+<tr><td>JWT Blacklist (logout)</td><td><code>blacklist:{token_hash}</td><td>Token remaining expiry</td><td>User Service</td></tr>
+<tr><td>Account Balance Cache</td><td><code>balance:{accountNumber}</code></td><td>60 seconds</td><td>Account Service</td></tr>
+<tr><td>OTP Storage</td><td><code>otp:{phone}</code></td><td>5 minutes</td><td>User Service</td></tr>
+<tr><td>Rate Limiting</td><td><code>rate:{userId}:{endpoint}</code></td><td>1 minute</td><td>API Gateway</td></tr>
+<tr><td>Session Lock</td><td><code>lock:{userId}</code></td><td>30 seconds</td><td>Transaction Service</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout tip">
+<span class="callout-icon">💡</span>
+<div><strong>Interview Answer:</strong> "I use Redis in BankFlow for three main purposes: (1) JWT blacklist — when a user logs out, the token is added to Redis with the remaining expiry as TTL, so invalidated tokens are blocked. (2) Account balance caching — balance queries are very frequent; caching for 60 seconds reduces database load significantly. (3) OTP storage — 5-minute TTL ensures OTPs expire automatically without any cleanup job."</div>
+</div>
+</section>
+
+<section id="s7" class="section">
+<div class="section-header"><div class="section-num">07</div><h2>REST API Reference</h2></div>
+
+<h3>Authentication (User Service)</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><span class="m m-post">POST</span></td><td><code>/api/auth/register</code></td><td>None</td><td>Register new customer</td></tr>
+<tr><td><span class="m m-post">POST</span></td><td><code>/api/auth/login</code></td><td>None</td><td>Login and get JWT token</td></tr>
+<tr><td><span class="m m-get">GET</span></td><td><code>/api/users/profile</code></td><td>JWT</td><td>Get current user profile</td></tr>
+<tr><td><span class="m m-put">PUT</span></td><td><code>/api/users/profile</code></td><td>JWT</td><td>Update profile</td></tr>
+<tr><td><span class="m m-get">GET</span></td><td><code>/api/users</code></td><td>ADMIN</td><td>Get all users</td></tr>
+<tr><td><span class="m m-put">PUT</span></td><td><code>/api/users/{userId}/toggle-status</code></td><td>ADMIN</td><td>Suspend/activate user</td></tr>
+<tr><td><span class="m m-put">PUT</span></td><td><code>/api/users/{userId}/kyc</code></td><td>ADMIN</td><td>Update KYC status</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Accounts</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><span class="m m-post">POST</span></td><td><code>/api/accounts</code></td><td>JWT</td><td>Open a new account</td></tr>
+<tr><td><span class="m m-get">GET</span></td><td><code>/api/accounts</code></td><td>JWT</td><td>Get my accounts</td></tr>
+<tr><td><span class="m m-get">GET</span></td><td><code>/api/accounts/{accountNumber}</code></td><td>JWT</td><td>Get account details</td></tr>
+<tr><td><span class="m m-get">GET</span></td><td><code>/api/accounts/{accountNumber}/balance</code></td><td>JWT</td><td>Get current balance</td></tr>
+<tr><td><span class="m m-put">PUT</span></td><td><code>/api/accounts/{accountNumber}/freeze</code></td><td>ADMIN</td><td>Freeze account</td></tr>
+<tr><td><span class="m m-put">PUT</span></td><td><code>/api/accounts/{accountNumber}/unfreeze</code></td><td>ADMIN</td><td>Unfreeze account</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Transactions</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><span class="m m-post">POST</span></td><td><code>/api/transactions/deposit</code></td><td>Credit money to account</td></tr>
+<tr><td><span class="m m-post">POST</span></td><td><code>/api/transactions/withdraw</code></td><td>Debit money from account</td></tr>
+<tr><td><span class="m m-post">POST</span></td><td><code>/api/transactions/transfer</code></td><td>Transfer between accounts (IMPS/NEFT/RTGS)</td></tr>
+<tr><td><span class="m m-get">GET</span></td><td><code>/api/transactions/history?page=0&size=20</code></td><td>Paginated transaction history</td></tr>
+<tr><td><span class="m m-get">GET</span></td><td><code>/api/transactions/account/{accountNumber}</code></td><td>All transactions for an account</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Loans</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><span class="m m-post">POST</span></td><td><code>/api/loans/apply</code></td><td>Apply for a loan</td></tr>
+<tr><td><span class="m m-get">GET</span></td><td><code>/api/loans/my-loans</code></td><td>My loan applications</td></tr>
+<tr><td><span class="m m-get">GET</span></td><td><code>/api/loans/{loanId}</code></td><td>Get loan details</td></tr>
+<tr><td><span class="m m-get">GET</span></td><td><code>/api/loans/{loanId}/emi-schedule</code></td><td>Get EMI amortization table</td></tr>
+<tr><td><span class="m m-get">GET</span></td><td><code>/api/loans/pending</code></td><td>[ADMIN] Get pending applications</td></tr>
+<tr><td><span class="m m-put">PUT</span></td><td><code>/api/loans/{loanId}/approve</code></td><td>[ADMIN] Approve loan</td></tr>
+<tr><td><span class="m m-put">PUT</span></td><td><code>/api/loans/{loanId}/reject?reason=...</code></td><td>[ADMIN] Reject loan</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section id="s8" class="section">
+<div class="section-header"><div class="section-num">08</div><h2>Database Schema</h2></div>
+<h3>users_db · users table</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>id</td><td>BIGSERIAL PK</td><td>Auto-increment</td></tr>
+<tr><td>user_id</td><td>VARCHAR(20) UNIQUE</td><td>e.g. USR-00001</td></tr>
+<tr><td>email</td><td>VARCHAR(255) UNIQUE</td><td>Indexed</td></tr>
+<tr><td>phone</td><td>VARCHAR(15) UNIQUE</td><td>10-digit validation</td></tr>
+<tr><td>password</td><td>VARCHAR(255)</td><td>BCrypt hash</td></tr>
+<tr><td>role</td><td>VARCHAR(20)</td><td>CUSTOMER | ADMIN</td></tr>
+<tr><td>kyc_status</td><td>VARCHAR(20)</td><td>PENDING → VERIFIED</td></tr>
+</tbody>
+</table>
+</div>
+<h3>accounts_db · accounts table</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>account_number</td><td>VARCHAR(16) UNIQUE</td><td>16-digit generated</td></tr>
+<tr><td>account_type</td><td>VARCHAR(20)</td><td>SAVINGS | CURRENT | FD | RD</td></tr>
+<tr><td>balance</td><td>DECIMAL(15,2)</td><td>Default: 0.00</td></tr>
+<tr><td>status</td><td>VARCHAR(20)</td><td>ACTIVE | FROZEN | CLOSED</td></tr>
+<tr><td>ifsc_code</td><td>VARCHAR(11)</td><td>BNKF0001234</td></tr>
+</tbody>
+</table>
+</div>
+<h3>transactions_db · transactions table</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Column</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>transaction_id</td><td>Unique e.g. TXN-A3F9B2C1D2E3</td></tr>
+<tr><td>type</td><td>DEPOSIT | WITHDRAWAL | TRANSFER_DEBIT | TRANSFER_CREDIT</td></tr>
+<tr><td>amount</td><td>DECIMAL(15,2)</td></tr>
+<tr><td>transaction_mode</td><td>IMPS | NEFT | RTGS | UPI | CASH | ATM</td></tr>
+<tr><td>reference_number</td><td>REF-{timestamp}</td></tr>
+</tbody>
+</table>
+</div>
+<h3>loans_db — 2 tables: loans + emi_schedule</h3>
+<p>loans: loanId, userId, loanType, amount, interestRate, tenureMonths, emiAmount, totalAmount, status</p>
+<p>emi_schedule: loanId, emiNumber, dueDate, emiAmount, principal, interest, status (PENDING/PAID/OVERDUE)</p>
+<h3>fraud_db · fraud_alerts table</h3>
+<p>alertId, userId, transactionId, alertType (MEDIUM_RISK/HIGH_RISK), riskScore, status (OPEN/RESOLVED)</p>
+</section>
+
+<section id="s9" class="section">
+<div class="section-header"><div class="section-num">09</div><h2>Security Architecture</h2></div>
+<h3>JWT Authentication Flow</h3>
+<pre>1. POST /api/auth/login {email, password}
+2. AuthenticationManager validates BCrypt(password) against stored hash
+3. JwtService.generateToken() → HS256 signed JWT (24h expiry)
+4. Token returned to React → stored in localStorage
+5. Every subsequent request: Authorization: Bearer [token]
+6. JwtAuthenticationFilter (OncePerRequestFilter):
+   a. Extract token from "Bearer " prefix
+   b. Decode and validate signature using secret key
+   c. Check expiry
+   d. Load user from DB by email
+   e. Set auth in SecurityContextHolder
+7. @PreAuthorize("hasRole('ADMIN')") enforced by Spring Security</pre>
+
+<h3>RBAC Permissions Table</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Action</th><th>CUSTOMER</th><th>ADMIN</th></tr></thead>
+<tbody>
+<tr><td>Register / Login</td><td>✅</td><td>✅</td></tr>
+<tr><td>View own profile</td><td>✅</td><td>✅</td></tr>
+<tr><td>View all users</td><td>❌</td><td>✅</td></tr>
+<tr><td>Suspend/activate users</td><td>❌</td><td>✅</td></tr>
+<tr><td>Update KYC</td><td>❌</td><td>✅</td></tr>
+<tr><td>Open accounts</td><td>✅</td><td>✅</td></tr>
+<tr><td>View own accounts</td><td>✅</td><td>✅</td></tr>
+<tr><td>Freeze accounts</td><td>❌</td><td>✅</td></tr>
+<tr><td>Deposit/Withdraw</td><td>✅</td><td>✅</td></tr>
+<tr><td>Fund Transfer</td><td>✅</td><td>✅</td></tr>
+<tr><td>Apply for loan</td><td>✅</td><td>✅</td></tr>
+<tr><td>Approve/Reject loans</td><td>❌</td><td>✅</td></tr>
+<tr><td>View fraud alerts</td><td>❌</td><td>✅</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section id="s10" class="section">
+<div class="section-header"><div class="section-num">10</div><h2>Fraud Detection Engine</h2></div>
+<p>Every transaction triggers a fraud check request via Kafka topic <code>fraud.check.request</code>. The Fraud Detection Service applies 4 rules and assigns a risk score:</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Rule</th><th>Condition</th><th>Risk Points</th></tr></thead>
+<tbody>
+<tr><td>Large Transaction</td><td>Amount &gt; ₹5,00,000</td><td>+40</td></tr>
+<tr><td>High-Risk Amount</td><td>Amount &gt; ₹1,00,000</td><td>+20</td></tr>
+<tr><td>Debit Transaction</td><td>Type = WITHDRAWAL or TRANSFER</td><td>+10</td></tr>
+<tr><td>Round Number</td><td>Amount is multiple of ₹10,000</td><td>+5</td></tr>
+</tbody>
+</table>
+</div>
+<p>If <strong>riskScore ≥ 30</strong>: creates a <code>FraudAlert</code> record (MEDIUM_RISK or HIGH_RISK) and publishes to <code>fraud.alert</code> Kafka topic, which triggers a Notification Service alert.</p>
+</section>
+
+<section id="s11" class="section">
+<div class="section-header"><div class="section-num">11</div><h2>Loan EMI Engine</h2></div>
+<h3>Interest Rates by Loan Type</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Loan Type</th><th>Annual Rate</th><th>Max Tenure</th><th>Use Case</th></tr></thead>
+<tbody>
+<tr><td>PERSONAL</td><td>12.00%</td><td>60 months</td><td>General purpose</td></tr>
+<tr><td>HOME</td><td>8.50%</td><td>360 months</td><td>Property purchase</td></tr>
+<tr><td>VEHICLE</td><td>9.50%</td><td>84 months</td><td>Car/bike purchase</td></tr>
+<tr><td>EDUCATION</td><td>7.50%</td><td>120 months</td><td>Higher education</td></tr>
+<tr><td>BUSINESS</td><td>14.00%</td><td>60 months</td><td>Business expansion</td></tr>
+<tr><td>GOLD</td><td>10.00%</td><td>24 months</td><td>Gold collateral</td></tr>
+</tbody>
+</table>
+</div>
+<h3>EMI Formula</h3>
+<pre>EMI = P × r × (1 + r)^n / ((1 + r)^n − 1)
+
+Where:
+  P = Principal loan amount
+  r = Monthly interest rate = Annual rate / 12 / 100
+  n = Tenure in months
+
+Example: ₹5,00,000 Personal loan at 12% for 36 months
+  r = 12 / 1200 = 0.01
+  EMI = 500000 × 0.01 × (1.01)^36 / ((1.01)^36 − 1)
+      = ₹16,607.15/month</pre>
+</section>
+
+<section id="s12" class="section">
+<div class="section-header"><div class="section-num">12</div><h2>React Frontend</h2></div>
+<h3>Pages</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Page</th><th>Path</th><th>Features</th></tr></thead>
+<tbody>
+<tr><td>Login</td><td>/login</td><td>Email/password, admin hint, redirect to dashboard</td></tr>
+<tr><td>Register</td><td>/register</td><td>Full name, email, phone, password registration</td></tr>
+<tr><td>Dashboard</td><td>/dashboard</td><td>Balance overview, 4 stat cards, recent transactions, account list</td></tr>
+<tr><td>Accounts</td><td>/accounts</td><td>Open new account modal, all accounts with balance and status</td></tr>
+<tr><td>Transactions</td><td>/transactions</td><td>Paginated history, Deposit/Withdraw modals, type/status badges</td></tr>
+<tr><td>Transfer</td><td>/transfer</td><td>IMPS/NEFT/RTGS/UPI transfer form with mode info panel</td></tr>
+<tr><td>Loans</td><td>/loans</td><td>Apply with live EMI calculator, view loans, EMI schedule modal</td></tr>
+<tr><td>Admin Panel</td><td>/admin</td><td>User management, KYC verification, loan approval/rejection</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section id="s13" class="section">
+<div class="section-header"><div class="section-num">13</div><h2>Docker & Infrastructure</h2></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Service</th><th>Image</th><th>Port</th><th>Depends On</th></tr></thead>
+<tbody>
+<tr><td>zookeeper</td><td>confluentinc/cp-zookeeper:7.5.0</td><td>2181</td><td>—</td></tr>
+<tr><td>kafka</td><td>confluentinc/cp-kafka:7.5.0</td><td>9092</td><td>zookeeper ✅</td></tr>
+<tr><td>redis</td><td>redis:7.2-alpine</td><td>6379</td><td>—</td></tr>
+<tr><td>postgres</td><td>postgres:15-alpine</td><td>5432</td><td>—</td></tr>
+<tr><td>user-service</td><td>Built from ./user-service</td><td>8081</td><td>postgres ✅, redis ✅, kafka ✅</td></tr>
+<tr><td>account-service</td><td>Built from ./account-service</td><td>8082</td><td>postgres ✅, redis ✅, kafka ✅</td></tr>
+<tr><td>transaction-service</td><td>Built from ./transaction-service</td><td>8083</td><td>postgres ✅, kafka ✅</td></tr>
+<tr><td>loan-service</td><td>Built from ./loan-service</td><td>8084</td><td>postgres ✅, kafka ✅</td></tr>
+<tr><td>notification-service</td><td>Built from ./notification-service</td><td>8085</td><td>kafka ✅</td></tr>
+<tr><td>fraud-detection-service</td><td>Built from ./fraud-detection-service</td><td>8086</td><td>postgres ✅, redis ✅, kafka ✅</td></tr>
+<tr><td>api-gateway</td><td>Built from ./api-gateway</td><td>8080</td><td>All services</td></tr>
+<tr><td>frontend</td><td>Node build → Nginx</td><td>3000</td><td>api-gateway</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section id="s14" class="section">
+<div class="section-header"><div class="section-num">14</div><h2>CI/CD Pipeline (Jenkins)</h2></div>
+<p>7-stage declarative pipeline defined in <code>Jenkinsfile</code>:</p>
+<ol>
+<li><strong>Checkout</strong> — Pull latest code from Git</li>
+<li><strong>Build</strong> — Compile all 6 backend services with Maven</li>
+<li><strong>Unit Tests</strong> — Run JUnit tests, publish Surefire reports</li>
+<li><strong>Package</strong> — Create executable JAR files</li>
+<li><strong>Docker Build</strong> — Build 8 Docker images (7 services + frontend)</li>
+<li><strong>Docker Push</strong> — Push to registry (main branch only)</li>
+<li><strong>Deploy</strong> — docker-compose up -d on target environment</li>
+</ol>
+</section>
+
+<section id="s15" class="section">
+<div class="section-header"><div class="section-num">15</div><h2>How to Run</h2></div>
+<h3>🐳 Docker Compose (Recommended)</h3>
+<pre>cd bankflow
+docker-compose up --build
+# Wait 5-10 minutes for first run
+# Frontend: http://localhost:3000
+# API:      http://localhost:8080
+# Swagger:  http://localhost:8081/swagger-ui.html</pre>
+<h3>Test Login</h3>
+<pre>curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@bankflow.com","password":"Admin@123"}'</pre>
+<h3>Open an Account</h3>
+<pre>curl -X POST http://localhost:8080/api/accounts \
+  -H "Authorization: Bearer [TOKEN]" \
+  -H "Content-Type: application/json" \
+  -d '{"accountType":"SAVINGS","branch":"Main Branch"}'</pre>
+<h3>Apply for Loan</h3>
+<pre>curl -X POST http://localhost:8080/api/loans/apply \
+  -H "Authorization: Bearer [TOKEN]" \
+  -H "Content-Type: application/json" \
+  -d '{"loanType":"PERSONAL","amount":500000,"tenureMonths":36,"accountNumber":"XXXX"}'</pre>
+</section>
+
+</div>
+<footer>
+<strong>BankFlow — Full Enterprise Banking System Documentation</strong><br/>
+Java 17 · Spring Boot 3.2 · React 18 · Kafka · Redis · PostgreSQL × 5 · Docker · Jenkins<br/>
+7 Microservices · 150+ Source Files · 10 Kafka Topics
+</footer>
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => { e.preventDefault(); document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'}); });
+});
+</script>
+</body>
+</html>
